@@ -1308,6 +1308,8 @@ type RepoCreds struct {
 	GithubAppPrivateKey string `json:"githubAppPrivateKey,omitempty" protobuf:"bytes,7,opt,name=githubAppPrivateKey"`
 	// Github App ID of the app used to access the repo
 	GithubAppID string `json:"githubAppID,omitempty" protobuf:"bytes,8,opt,name=githubAppID"`
+	// Github App Enterprise base url if empty will default to https://api.github.com
+	GitHubAppEnterpriseBaseURL string `json:"githubAppEnterpriseBaseUrl,omitempty" protobuf:"bytes,9,opt,name=githubAppEnterpriseBaseUrl"`
 }
 
 // Repository is a repository holding application configurations
@@ -1346,6 +1348,8 @@ type Repository struct {
 	GithubAppPrivateKey string `json:"githubAppPrivateKey,omitempty" protobuf:"bytes,15,opt,name=githubAppPrivateKey"`
 	// Github App ID of the app used to access the repo
 	GithubAppID string `json:"githubAppID,omitempty" protobuf:"bytes,16,opt,name=githubAppID"`
+	// Github App Enterprise base url if empty will default to https://api.github.com
+	GitHubAppEnterpriseBaseURL string `json:"githubAppEnterpriseBaseUrl,omitempty" protobuf:"bytes,17,opt,name=githubAppEnterpriseBaseUrl"`
 }
 
 // IsInsecure returns true if receiver has been configured to skip server verification
@@ -1415,7 +1419,7 @@ func (repo *Repository) GetGitCreds() git.Creds {
 		return git.NewSSHCreds(repo.SSHPrivateKey, getCAPath(repo.Repo), repo.IsInsecure())
 	}
 	if repo.GithubAppPrivateKey != "" && repo.GithubAppID != "" {
-		return git.NewGitHubAppCreds(repo.GithubAppID, repo.GithubAppPrivateKey)
+		return git.NewGitHubAppCreds(repo.GithubAppID, repo.GithubAppPrivateKey, repo.GitHubAppEnterpriseBaseURL, repo.Repo)
 	}
 	return git.NopCreds{}
 }
