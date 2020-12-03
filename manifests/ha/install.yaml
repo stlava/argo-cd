@@ -3012,7 +3012,11 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis-ha-haproxy:6379
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:v1.8.0-rc2
+>>>>>>> Bump version to 1.8.0-rc2
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -3094,7 +3098,11 @@ spec:
         env:
         - name: ARGOCD_API_SERVER_REPLICAS
           value: "2"
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:v1.8.0-rc2
+>>>>>>> Bump version to 1.8.0-rc2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3170,7 +3178,11 @@ spec:
         - "10"
         - --redis
         - argocd-redis-ha-haproxy:6379
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:v1.8.0-rc2
+>>>>>>> Bump version to 1.8.0-rc2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

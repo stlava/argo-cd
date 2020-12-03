@@ -2558,7 +2558,11 @@ spec:
         - argocd-server
         - --staticassets
         - /shared/app
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:v1.8.0-rc2
+>>>>>>> Bump version to 1.8.0-rc2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2633,7 +2637,11 @@ spec:
         - "20"
         - --operation-processors
         - "10"
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:v1.8.0-rc2
+>>>>>>> Bump version to 1.8.0-rc2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
