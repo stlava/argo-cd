@@ -2794,8 +2794,12 @@ spec:
 =======
         - /usr/local/bin/argocd-util
         - /shared
+<<<<<<< HEAD
         image: argoproj/argocd:v1.8.1
 >>>>>>> Bump version to 1.8.1
+=======
+        image: argoproj/argocd:v1.8.2
+>>>>>>> Bump version to 1.8.2
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -2934,10 +2938,14 @@ spec:
         - --redis
         - argocd-redis-ha-haproxy:6379
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.1
 >>>>>>> Bump version to 1.8.1
+=======
+        image: argoproj/argocd:v1.8.2
+>>>>>>> Bump version to 1.8.2
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -3020,10 +3028,14 @@ spec:
         - name: ARGOCD_API_SERVER_REPLICAS
           value: "2"
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.1
 >>>>>>> Bump version to 1.8.1
+=======
+        image: argoproj/argocd:v1.8.2
+>>>>>>> Bump version to 1.8.2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3100,10 +3112,14 @@ spec:
         - --redis
         - argocd-redis-ha-haproxy:6379
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.1
 >>>>>>> Bump version to 1.8.1
+=======
+        image: argoproj/argocd:v1.8.2
+>>>>>>> Bump version to 1.8.2
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
