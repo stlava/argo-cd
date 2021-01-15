@@ -5687,6 +5687,12 @@
           "type": "string",
           "title": "PredictedLiveState contains JSON serialized resource state that is calculated based on normalized and target resource state"
         },
+        "resourceVersion": {
+          "type": "string"
+        },
+        "syncStatus": {
+          "type": "string"
+        },
         "targetState": {
           "type": "string",
           "title": "TargetState contains the JSON serialized resource manifest defined in the Git/Helm"
