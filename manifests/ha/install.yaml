@@ -2880,11 +2880,15 @@ spec:
         - /usr/local/bin/argocd-util
         - /shared
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: argoproj/argocd:v1.8.1
 >>>>>>> Bump version to 1.8.1
 =======
         image: argoproj/argocd:v1.8.2
 >>>>>>> Bump version to 1.8.2
+=======
+        image: argoproj/argocd:v1.8.3
+>>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -3024,6 +3028,7 @@ spec:
         - argocd-redis-ha-haproxy:6379
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.1
@@ -3031,6 +3036,9 @@ spec:
 =======
         image: argoproj/argocd:v1.8.2
 >>>>>>> Bump version to 1.8.2
+=======
+        image: argoproj/argocd:v1.8.3
+>>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -3116,6 +3124,7 @@ spec:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.0-rc2
@@ -3129,6 +3138,9 @@ spec:
 =======
         image: argoproj/argocd:v1.8.2
 >>>>>>> Bump version to 1.8.2
+=======
+        image: argoproj/argocd:v1.8.3
+>>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -3206,6 +3218,7 @@ spec:
         - argocd-redis-ha-haproxy:6379
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
 =======
         image: argoproj/argocd:v1.8.1
@@ -3213,6 +3226,9 @@ spec:
 =======
         image: argoproj/argocd:v1.8.2
 >>>>>>> Bump version to 1.8.2
+=======
+        image: argoproj/argocd:v1.8.3
+>>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
