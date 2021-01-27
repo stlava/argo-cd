@@ -1,9 +1,11 @@
 package git
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"strings"
 
@@ -11,6 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	certutil "github.com/argoproj/argo-cd/util/cert"
+	"github.com/argoproj/argo-cd/util/github"
 )
 
 type Creds interface {
@@ -178,4 +181,104 @@ func (c SSHCreds) Environ() (io.Closer, []string, error) {
 	}
 	env = append(env, []string{fmt.Sprintf("GIT_SSH_COMMAND=%s", strings.Join(args, " "))}...)
 	return sshPrivateKeyFile(file.Name()), env, nil
+}
+
+// GitHubAppCreds to authenticate as GitHub application
+type GitHubAppCreds struct {
+	appID       string
+	privateKey  string
+	baseURL     string
+	accessToken string
+	repoURL     string
+}
+
+// NewGitHubAppCreds provide github app credentials
+func NewGitHubAppCreds(appID string, privateKey string, baseURL string, repoURL string) GitHubAppCreds {
+	return GitHubAppCreds{appID: appID, privateKey: privateKey, baseURL: baseURL, repoURL: repoURL}
+}
+
+func (g GitHubAppCreds) Environ() (io.Closer, []string, error) {
+	// NOTE: this function is untested; it is sort-of pseudo code but compiles
+
+	// if this custom token logic doesn't work, we could try to pull in something like go-github
+	// however, it would be neat to avoid that as it should be possible to create a sane process without
+	// pulling in thousands of lines of code tht this project does not need at all
+	// Furthermore, the project already has a dependency that allows for working with tokens
+	// github.com/dgrijalva/jwt-go
+
+	// TODO allow the UI to create github app creds
+	baseURL := github.BaseURL(g.baseURL)
+
+	owner, repo := github.OwnerAndRepoName(g.repoURL)
+	if owner == "" || repo == "" {
+		return nil, nil, errors.new("Cannot extract owner and/or repo from repository URL")
+	}
+
+	ownerRepo := fmt.Sprintf("%s/%s", owner, repo)
+
+	// TODO cache installation id, access token under ownerRepo key
+	// Potentially we need to cache installation response etag
+	// to see if the installation id has not changed.
+
+	bearer, err := github.Bearer(g.appID, g.privateKey)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	authorization := fmt.Sprintf("Bearer %s", bearer)
+	accept := "application/vnd.github.v3+json"
+
+	url := fmt.Sprintf("%s/repos/%s/%s/installation", baseURL, owner, repo)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req.Header.Add("Authorization", authorization)
+	req.Header.Add("Accept", accept)
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer resp.Body.Close()
+
+	// TODO handle response code
+
+	var installation github.Installation
+	json.NewDecoder(resp.body).decode(&installation)
+
+	// TODO check installation permissions for to contents and metadata READ
+
+	// TODO Cleanup http request code and decoding JSON
+
+	url := fmt.Sprintf("%s/app/installations/%d/access_tokens", baseURL, installation.ID)
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	req.Header.Add("Authorization", authorization)
+	req.Header.Add("Accept", accept)
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer resp.Body.Close()
+
+	// TODO handle response code
+
+	var access github.InstallationAccessToken
+	json.NewDecoder(resp.body).decode(&access)
+
+	g.accessToken = access.Token
+	// TODO cache the token and implement refresh.
+	// There is no refresh option for an installation access token.
+	// You simply request another token.
+
+	// TODO potentially implement similar things to HTTPCreds environ
+
+	return nil, nil, nil
 }
