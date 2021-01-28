@@ -16,7 +16,7 @@ import (
 var ErrCacheMiss = cacheutil.ErrCacheMiss
 
 const (
-	clusterInfoCacheExpiration = 10 * time.Minute
+	clusterInfoCacheExpiration = 20 * time.Minute
 )
 
 type Cache struct {

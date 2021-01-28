@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	secretUpdateInterval = 10 * time.Second
+	secretUpdateInterval = 10 * time.Minute
 )
 
 type clusterInfoUpdater struct {
