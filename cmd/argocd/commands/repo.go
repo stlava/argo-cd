@@ -50,14 +50,18 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 		tlsClientCertKeyPath           string
 		enableLfs                      bool
 		enableOci                      bool
+		githubAppPrivateKeyPath        string
+		githubAppId					   int64
+		githubAppInstallationId        int64
+		gitHubAppEnterpriseBaseURL     string
 	)
 
 	// For better readability and easier formatting
 	var repoAddExamples = `  # Add a Git repository via SSH using a private key for authentication, ignoring the server's host key:
-	argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-private-key-path ~/id_rsa
+  argocd repo add git@git.example.com:repos/repo --insecure-ignore-host-key --ssh-private-key-path ~/id_rsa
 
-	# Add a Git repository via SSH on a non-default port - need to use ssh:// style URLs here
-	argocd repo add ssh://git@git.example.com:2222/repos/repo --ssh-private-key-path ~/id_rsa
+  # Add a Git repository via SSH on a non-default port - need to use ssh:// style URLs here
+  argocd repo add ssh://git@git.example.com:2222/repos/repo --ssh-private-key-path ~/id_rsa
 
   # Add a private Git repository via HTTPS using username/password and TLS client certificates:
   argocd repo add https://git.example.com/repos/repo --username git --password secret --tls-client-cert-path ~/mycert.crt --tls-client-cert-key-path ~/mycert.key
@@ -73,6 +77,12 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 
   # Add a private Helm OCI-based repository named 'stable' via HTTPS
   argocd repo add helm-oci-registry.cn-zhangjiakou.cr.aliyuncs.com --type helm --name stable --enable-oci --username test --password test
+
+  # Add a private Git repository on GitHub.com via GitHub App
+  argocd repo add https://git.example.com/repos/repo --github-app-id 1 --github-app-installation-id 2 --github-app-private-key-path test.private-key.pem
+
+  # Add a private Git repository on GitHub Enterprise via GitHub App
+  argocd repo add https://ghe.example.com/repos/repo --github-app-id 1 --github-app-installation-id 2 --github-app-private-key-path test.private-key.pem --github-app-enterprise-base-url https://ghe.example.com/api/v3
 `
 
 	var command = &cobra.Command{
@@ -124,6 +134,18 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 				}
 			}
 
+			// Specifying github-app-private-key-path is only valid for HTTPS repositories
+			if githubAppPrivateKeyPath != "" {
+				if git.IsHTTPSURL(repo.Repo) {
+					githubAppPrivateKey, err := ioutil.ReadFile(githubAppPrivateKeyPath)
+					errors.CheckError(err)
+					repo.GithubAppPrivateKey = string(githubAppPrivateKey)
+				} else {
+					err := fmt.Errorf("--github-app-private-key-path is only supported for HTTPS repositories")
+					errors.CheckError(err)
+				}
+			}
+
 			// Set repository connection properties only when creating repository, not
 			// when creating repository credentials.
 			// InsecureIgnoreHostKey is deprecated and only here for backwards compat
@@ -131,6 +153,9 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 			repo.Insecure = insecureSkipServerVerification
 			repo.EnableLFS = enableLfs
 			repo.EnableOCI = enableOci
+			repo.GithubAppId = githubAppId
+			repo.GithubAppInstallationId = githubAppInstallationId
+			repo.GitHubAppEnterpriseBaseURL = gitHubAppEnterpriseBaseURL
 
 			if repo.Type == "helm" && repo.Name == "" {
 				errors.CheckError(fmt.Errorf("Must specify --name for repos of type 'helm'"))
@@ -153,16 +178,20 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 			// are high that we do not have the given URL pointing to a valid Git
 			// repo anyway.
 			repoAccessReq := repositorypkg.RepoAccessQuery{
-				Repo:              repo.Repo,
-				Type:              repo.Type,
-				Name:              repo.Name,
-				Username:          repo.Username,
-				Password:          repo.Password,
-				SshPrivateKey:     repo.SSHPrivateKey,
-				TlsClientCertData: repo.TLSClientCertData,
-				TlsClientCertKey:  repo.TLSClientCertKey,
-				Insecure:          repo.IsInsecure(),
-				EnableOci:         repo.EnableOCI,
+				Repo:                       repo.Repo,
+				Type:                       repo.Type,
+				Name:                       repo.Name,
+				Username:                   repo.Username,
+				Password:                   repo.Password,
+				SshPrivateKey:              repo.SSHPrivateKey,
+				TlsClientCertData:          repo.TLSClientCertData,
+				TlsClientCertKey:           repo.TLSClientCertKey,
+				Insecure:                   repo.IsInsecure(),
+				EnableOci:                  repo.EnableOCI,
+				GithubAppPrivateKey:        repo.GithubAppPrivateKey,
+				GithubAppID:                repo.GithubAppId,
+				GithubAppInstallationID:    repo.GithubAppInstallationId,
+				GithubAppEnterpriseBaseUrl: repo.GitHubAppEnterpriseBaseURL,
 			}
 			_, err := repoIf.ValidateAccess(context.Background(), &repoAccessReq)
 			errors.CheckError(err)
@@ -188,6 +217,10 @@ func NewRepoAddCommand(clientOpts *argocdclient.ClientOptions) *cobra.Command {
 	command.Flags().BoolVar(&insecureSkipServerVerification, "insecure-skip-server-verification", false, "disables server certificate and host key checks")
 	command.Flags().BoolVar(&enableLfs, "enable-lfs", false, "enable git-lfs (Large File Support) on this repository")
 	command.Flags().BoolVar(&enableOci, "enable-oci", false, "enable helm-oci (Helm OCI-Based Repository)")
+	command.Flags().Int64Var(&githubAppId, "github-app-id", 0, "id of the GitHub Application")
+	command.Flags().Int64Var(&githubAppInstallationId, "github-app-installation-id", 0, "installation id of the GitHub Application")
+	command.Flags().StringVar(&githubAppPrivateKeyPath, "github-app-private-key-path", "", "private key of the GitHub Application")
+	command.Flags().StringVar(&gitHubAppEnterpriseBaseURL, "github-app-enterprise-base-url", "", "base url to use when using GitHub Enterprise (e.g. https://ghe.example.com/api/v3")
 	command.Flags().BoolVar(&upsert, "upsert", false, "Override an existing repository with the same name even if the spec differs")
 	return command
 }
