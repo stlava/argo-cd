@@ -2463,23 +2463,9 @@ spec:
       - command:
         - cp
         - -n
-<<<<<<< HEAD
         - /usr/local/bin/argocd
         - /shared/argocd-dex
         image: quay.io/argoproj/argocd:latest
-=======
-        - /usr/local/bin/argocd-util
-        - /shared
-<<<<<<< HEAD
-<<<<<<< HEAD
-        image: argoproj/argocd:v1.8.1
->>>>>>> Bump version to 1.8.1
-=======
-        image: argoproj/argocd:v1.8.2
->>>>>>> Bump version to 1.8.2
-=======
-        image: argoproj/argocd:v1.8.3
->>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -2579,19 +2565,7 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
-=======
-        image: argoproj/argocd:v1.8.1
->>>>>>> Bump version to 1.8.1
-=======
-        image: argoproj/argocd:v1.8.2
->>>>>>> Bump version to 1.8.2
-=======
-        image: argoproj/argocd:v1.8.3
->>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -2669,19 +2643,7 @@ spec:
         - argocd-server
         - --staticassets
         - /shared/app
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
-=======
-        image: argoproj/argocd:v1.8.1
->>>>>>> Bump version to 1.8.1
-=======
-        image: argoproj/argocd:v1.8.2
->>>>>>> Bump version to 1.8.2
-=======
-        image: argoproj/argocd:v1.8.3
->>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2756,19 +2718,7 @@ spec:
         - "20"
         - --operation-processors
         - "10"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
-=======
-        image: argoproj/argocd:v1.8.1
->>>>>>> Bump version to 1.8.1
-=======
-        image: argoproj/argocd:v1.8.2
->>>>>>> Bump version to 1.8.2
-=======
-        image: argoproj/argocd:v1.8.3
->>>>>>> Bump version to 1.8.3
         imagePullPolicy: Always
         livenessProbe:
           httpGet:

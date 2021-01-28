@@ -5463,6 +5463,24 @@
       "type": "object",
       "title": "RepoCreds holds a repository credentials definition",
       "properties": {
+        "githubAppEnterpriseBaseUrl": {
+          "type": "string",
+          "title": "Github App Enterprise base url if empty will default to https://api.github.com"
+        },
+        "githubAppID": {
+          "type": "string",
+          "format": "int64",
+          "title": "Github App ID of the app used to access the repo"
+        },
+        "githubAppInstallationID": {
+          "type": "string",
+          "format": "int64",
+          "title": "Github App Installation ID of the installed GitHub App"
+        },
+        "githubAppPrivateKey": {
+          "type": "string",
+          "title": "Github App Private Key PEM data"
+        },
         "password": {
           "type": "string",
           "title": "Password for authenticating at the repo server"
@@ -5518,6 +5536,24 @@
         "enableOCI": {
           "type": "boolean",
           "title": "Whether helm-oci support should be enabled for this repo"
+        },
+        "githubAppEnterpriseBaseUrl": {
+          "type": "string",
+          "title": "Github App Enterprise base url if empty will default to https://api.github.com"
+        },
+        "githubAppID": {
+          "type": "string",
+          "format": "int64",
+          "title": "Github App ID of the app used to access the repo"
+        },
+        "githubAppInstallationID": {
+          "type": "string",
+          "format": "int64",
+          "title": "Github App Installation ID of the installed GitHub App"
+        },
+        "githubAppPrivateKey": {
+          "type": "string",
+          "title": "Github App Private Key PEM data"
         },
         "inheritedCreds": {
           "type": "boolean",
