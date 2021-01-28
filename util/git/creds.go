@@ -298,7 +298,7 @@ func (g GitHubAppCreds) Environ() (io.Closer, []string, error) {
 func (g GitHubAppCreds) getAccessToken() (string, error) {
 	// Compute hash of creds for lookup in cache
 	h := sha256.New()
-	h.Write([]byte(fmt.Sprintf("%v", g)))
+	h.Write([]byte(fmt.Sprintf("%s %d %d %s", g.privateKey, g.appID, g.appInstallId, g.baseURL)))
 	key := fmt.Sprintf("%x", h.Sum(nil))
 
 	// Check cache for GitHub transport which helps fetch an API token
