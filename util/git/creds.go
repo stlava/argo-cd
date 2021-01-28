@@ -293,6 +293,8 @@ func (g GitHubAppCreds) Environ() (io.Closer, []string, error) {
 	return httpCloser, env, nil
 }
 
+// getAccessToken fetches GitHub token using the app id, install id, and private key.
+// the token is then cached for re-use.
 func (g GitHubAppCreds) getAccessToken() (string, error) {
 	// Compute hash of creds for lookup in cache
 	h := sha256.New()
@@ -303,13 +305,14 @@ func (g GitHubAppCreds) getAccessToken() (string, error) {
 	t, found := githubAppTokenCache.Get(key)
 	if found {
 		itr := t.(*ghinstallation.Transport)
+		// This method caches the token and if it's expired retrieves a new one
 		return itr.Token(context.TODO())
 	}
 
 	// Create a new GitHub transport
 	itr, err := ghinstallation.New(http.DefaultTransport,
-		int64(g.appID),
-		int64(g.appInstallId),
+		g.appID,
+		g.appInstallId,
 		[]byte(g.privateKey),
 	)
 	if err != nil {
