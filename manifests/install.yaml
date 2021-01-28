@@ -2463,9 +2463,15 @@ spec:
       - command:
         - cp
         - -n
+<<<<<<< HEAD
         - /usr/local/bin/argocd
         - /shared/argocd-dex
         image: quay.io/argoproj/argocd:latest
+=======
+        - /usr/local/bin/argocd-util
+        - /shared
+        image: argoproj/argocd:latest
+>>>>>>> run codegen
         imagePullPolicy: Always
         name: copyutil
         volumeMounts:
@@ -2565,7 +2571,11 @@ spec:
         - argocd-repo-server
         - --redis
         - argocd-redis:6379
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:latest
+>>>>>>> run codegen
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
@@ -2643,7 +2653,11 @@ spec:
         - argocd-server
         - --staticassets
         - /shared/app
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:latest
+>>>>>>> run codegen
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
@@ -2718,7 +2732,11 @@ spec:
         - "20"
         - --operation-processors
         - "10"
+<<<<<<< HEAD
         image: quay.io/argoproj/argocd:latest
+=======
+        image: argoproj/argocd:latest
+>>>>>>> run codegen
         imagePullPolicy: Always
         livenessProbe:
           httpGet:
