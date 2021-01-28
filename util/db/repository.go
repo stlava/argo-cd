@@ -168,7 +168,6 @@ func (db *db) credentialsToRepository(repoInfo settings.Repository) (*appsv1.Rep
 		&repo.TLSClientCertData:   repoInfo.TLSClientCertDataSecret,
 		&repo.TLSClientCertKey:    repoInfo.TLSClientCertKeySecret,
 		&repo.GithubAppPrivateKey: repoInfo.GithubAppPrivateKey,
-
 	}, make(map[string]*apiv1.Secret))
 	return repo, err
 }

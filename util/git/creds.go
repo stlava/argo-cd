@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	gocache "github.com/patrickmn/go-cache"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	gocache "github.com/patrickmn/go-cache"
 
 	argoio "github.com/argoproj/gitops-engine/pkg/utils/io"
 	"github.com/bradleyfalzon/ghinstallation"
@@ -23,7 +24,7 @@ import (
 var githubAppTokenCache *gocache.Cache
 
 func init() {
-	githubAppTokenCache = gocache.New(60 * time.Minute, 1 * time.Minute)
+	githubAppTokenCache = gocache.New(60*time.Minute, 1*time.Minute)
 }
 
 type Creds interface {
@@ -214,15 +215,14 @@ func (c SSHCreds) Environ() (io.Closer, []string, error) {
 
 // GitHubAppCreds to authenticate as GitHub application
 type GitHubAppCreds struct {
-	appID        int64
-	appInstallId int64
-	privateKey   string
-	baseURL      string
-	accessToken  string
-	repoURL      string
+	appID          int64
+	appInstallId   int64
+	privateKey     string
+	baseURL        string
+	repoURL        string
 	clientCertData string
-	clientCertKey string
-	insecure bool
+	clientCertKey  string
+	insecure       bool
 }
 
 // NewGitHubAppCreds provide github app credentials
@@ -298,7 +298,10 @@ func (g GitHubAppCreds) Environ() (io.Closer, []string, error) {
 func (g GitHubAppCreds) getAccessToken() (string, error) {
 	// Compute hash of creds for lookup in cache
 	h := sha256.New()
-	h.Write([]byte(fmt.Sprintf("%s %d %d %s", g.privateKey, g.appID, g.appInstallId, g.baseURL)))
+	_, err := h.Write([]byte(fmt.Sprintf("%s %d %d %s", g.privateKey, g.appID, g.appInstallId, g.baseURL)))
+	if err != nil {
+		return "", err
+	}
 	key := fmt.Sprintf("%x", h.Sum(nil))
 
 	// Check cache for GitHub transport which helps fetch an API token
@@ -324,7 +327,7 @@ func (g GitHubAppCreds) getAccessToken() (string, error) {
 	}
 
 	// Add transport to cache
-	githubAppTokenCache.Set(key, itr, time.Minute * 60)
+	githubAppTokenCache.Set(key, itr, time.Minute*60)
 
 	return itr.Token(context.Background())
 }
