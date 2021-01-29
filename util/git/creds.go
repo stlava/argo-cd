@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -312,8 +311,15 @@ func (g GitHubAppCreds) getAccessToken() (string, error) {
 		return itr.Token(context.TODO())
 	}
 
+	// GitHub API url
+	baseUrl := "https://api.github.com"
+	if g.baseURL != "" {
+		baseUrl = strings.TrimSuffix(g.baseURL, "/")
+	}
+
 	// Create a new GitHub transport
-	itr, err := ghinstallation.New(http.DefaultTransport,
+	c := GetRepoHTTPClient(baseUrl, g.insecure, g)
+	itr, err := ghinstallation.New(c.Transport,
 		g.appID,
 		g.appInstallId,
 		[]byte(g.privateKey),
@@ -322,9 +328,7 @@ func (g GitHubAppCreds) getAccessToken() (string, error) {
 		return "", err
 	}
 
-	if g.baseURL != "" {
-		itr.BaseURL = strings.TrimSuffix(g.baseURL, "/")
-	}
+	itr.BaseURL = baseUrl
 
 	// Add transport to cache
 	githubAppTokenCache.Set(key, itr, time.Minute*60)
